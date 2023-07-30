@@ -113,7 +113,8 @@ extension DrawOnPath on Canvas {
 
   void drawOnPath(
     Path path,
-    void Function(int index, Canvas canvas, Offset position) drawElementAt, {
+    void Function(int index, int total, Canvas canvas, Offset position)
+        drawElementAt, {
     required double spacing,
   }) {
     assert(spacing > 0);
@@ -126,6 +127,17 @@ extension DrawOnPath on Canvas {
     final pathMetricsList = pathMetrics.toList();
 
     int currentMetric = 0;
+
+    var total = 0;
+    while (currentMetric < pathMetricsList.length) {
+      final currMetricLength = pathMetricsList[currentMetric].length;
+      for (double d = 0.0; d < currMetricLength; d += spacing) {
+        total++;
+      }
+      currentMetric++;
+    }
+
+    currentMetric = 0;
     int index = 0;
 
     while (currentMetric < pathMetricsList.length) {
@@ -139,7 +151,8 @@ extension DrawOnPath on Canvas {
         translate(currPos.dx, currPos.dy);
         rotate(-currAngle);
 
-        drawElementAt(index, this, currPos.translate(-currPos.dx, -currPos.dy));
+        drawElementAt(
+            index, total, this, currPos.translate(-currPos.dx, -currPos.dy));
         index++;
 
         restore();
